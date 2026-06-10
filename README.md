@@ -1,3 +1,15 @@
+---
+title: Redrob Intelligent Candidate Ranker
+emoji: 🎯
+colorFrom: blue
+colorTo: indigo
+sdk: gradio
+sdk_version: 5.0.0
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # Redrob Intelligent Candidate Discovery & Ranking System
 
 A multi-signal candidate ranking system for the **Senior AI Engineer — Founding Team** role at Redrob AI. Built for the India Runs Hackathon 2026 (Data & AI Challenge).
