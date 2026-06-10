@@ -1,0 +1,57 @@
+# Redrob Hackathon -- Submission Metadata
+team_name: "solo-priyanshu"
+
+primary_contact:
+  name: "Priyanshu"
+  email: "doshipriyanshu3@gmail.com"
+  phone: "+91-9549926195"
+
+team_members:
+  - name: "Priyanshu"
+    email: "doshipriyanshu3@gmail.com"
+    role: "Solo Participant"
+
+github_repo: "https://github.com/UPDATE_USERNAME/redrob-ranker"
+
+sandbox_link: "https://huggingface.co/spaces/UPDATE_USERNAME/redrob-ranker"
+
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
+
+compute:
+  platform: "Windows 11, Intel CPU"
+  cpu_cores: 8
+  ram_gb: 16
+  python_version: "3.12"
+  os: "Windows 11"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: false
+  pre_computation_time_minutes: 0
+
+ai_tools_used:
+  - "Claude"
+  - "Claude Code"
+
+ai_usage_summary: |
+  Used Claude and Claude Code for architecture discussion, code review,
+  and iterative development of the ranking pipeline. No candidate data
+  was fed to any LLM. The ranking system uses purely rule-based scoring
+  with hand-crafted features -- no AI inference during ranking.
+
+methodology_summary: |
+  Rule-based multi-signal ranker with 4-stage pipeline. Stage 0 detects
+  ~80 honeypot candidates via date arithmetic and skill impossibility checks.
+  Stage 1 coarse-filters 100K to ~4K using title classification and career
+  description analysis. Stage 2 scores across 8 dimensions: title alignment,
+  skill match with trust multiplier, career trajectory (production ML evidence
+  in descriptions), experience fit (5-9yr bell curve), location (India Tier-1),
+  education, behavioral signals, and anti-pattern penalties (consulting-only,
+  keyword stuffers, title chasers). Stage 3 ranks and generates per-candidate
+  reasoning. Runtime: ~50s CPU-only. No embeddings, no LLM calls.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true
