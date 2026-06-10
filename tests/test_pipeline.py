@@ -3,6 +3,7 @@ End-to-end tests for the ranking pipeline.
 Uses sample_candidates.json as test data.
 """
 import json
+import csv
 import sys
 import os
 from pathlib import Path
@@ -13,9 +14,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from pipeline.honeypot import detect_honeypot
 from pipeline.coarse_filter import coarse_filter
 from pipeline.scorer import score_candidate
+from pipeline.ranker import generate_reasoning, rank_and_output
 from pipeline.features.title_alignment import score_title_alignment
 from pipeline.features.skills_match import score_skills_match
 from pipeline.features.experience_fit import score_experience_fit
+from pipeline.features.anti_patterns import score_anti_patterns
+from pipeline.features.career_trajectory import score_career_trajectory
 
 
 def load_sample():
@@ -98,6 +102,112 @@ def test_full_pipeline():
     print(f"  Scored {len(scored)} candidates")
 
 
+def test_tiebreak_correctness():
+    """When two candidates have identical scores, lower candidate_id should rank first."""
+    # Create two fake scored dicts with identical composite scores
+    base = {
+        "composite_score": 0.75,
+        "sub_scores": {"title": 0.8, "skills": 0.7, "career": 0.6,
+                       "experience": 0.9, "location": 0.8, "education": 0.5,
+                       "behavioral": 0.7, "anti_penalty": 0.0},
+        "anti_flags": [],
+        "matched_skills": ["python", "pytorch"],
+        "career_detail": {"ml_jobs": 2, "total_jobs": 3},
+        "profile": {"current_title": "ML Engineer", "current_company": "TestCo",
+                     "years_of_experience": 7.0, "location": "Bangalore", "country": "India"},
+        "redrob_signals": {"notice_period_days": 30, "recruiter_response_rate": 0.8},
+    }
+    import copy
+    c1 = copy.deepcopy(base)
+    c1["candidate_id"] = "CAND_999"
+    c2 = copy.deepcopy(base)
+    c2["candidate_id"] = "CAND_001"
+
+    import tempfile
+    out = tempfile.mktemp(suffix=".csv")
+    rank_and_output([c1, c2], out)
+
+    with open(out, encoding="utf-8") as f:
+        reader = list(csv.DictReader(f))
+    assert reader[0]["candidate_id"] == "CAND_001", f"Expected CAND_001 first, got {reader[0]['candidate_id']}"
+    assert reader[1]["candidate_id"] == "CAND_999"
+    assert int(reader[0]["rank"]) == 1
+    assert int(reader[1]["rank"]) == 2
+    os.unlink(out)
+    print("  Tie-break ordering correct: CAND_001 before CAND_999")
+
+
+def test_anti_pattern_consulting_only():
+    """All-consulting career should be flagged."""
+    candidate = {
+        "profile": {"current_title": "Software Engineer"},
+        "skills": [],
+        "career_history": [
+            {"company": "TCS", "title": "Developer", "description": "Java apps", "duration_months": 24},
+            {"company": "Infosys", "title": "Senior Dev", "description": "Web apps", "duration_months": 36},
+        ],
+    }
+    penalty, flags = score_anti_patterns(candidate)
+    assert "consulting_only" in flags, f"Expected consulting_only flag, got {flags}"
+    assert penalty >= 0.4
+    print(f"  Consulting-only penalty: {penalty:.2f}, flags: {flags}")
+
+
+def test_anti_pattern_keyword_stuffer():
+    """Non-tech title with AI skills but no ML work in descriptions."""
+    candidate = {
+        "profile": {"current_title": "HR Manager"},
+        "skills": [
+            {"name": "Machine Learning", "proficiency": "expert", "duration_months": 0},
+            {"name": "PyTorch", "proficiency": "advanced", "duration_months": 0},
+            {"name": "Deep Learning", "proficiency": "expert", "duration_months": 0},
+        ],
+        "career_history": [
+            {"company": "SomeCo", "title": "HR Manager", "description": "Managed recruitment process and employee relations"},
+        ],
+    }
+    penalty, flags = score_anti_patterns(candidate)
+    assert "keyword_stuffer" in flags, f"Expected keyword_stuffer, got {flags}"
+    print(f"  Keyword stuffer penalty: {penalty:.2f}, flags: {flags}")
+
+
+def test_career_trajectory_leadership_bonus():
+    """Candidates with ML leadership experience should get a boost."""
+    base_candidate = {
+        "profile": {"current_title": "ML Engineer", "years_of_experience": 7.0},
+        "skills": [],
+        "career_history": [
+            {"company": "TechCo", "title": "ML Engineer",
+             "description": "Built recommendation system using deep learning and embeddings",
+             "duration_months": 36, "is_current": True},
+        ],
+    }
+    import copy
+    leader = copy.deepcopy(base_candidate)
+    leader["career_history"][0]["description"] += ". Led team of 5 ML engineers, architected the system."
+
+    base_score, base_detail = score_career_trajectory(base_candidate)
+    leader_score, leader_detail = score_career_trajectory(leader)
+
+    assert leader_score >= base_score, f"Leader ({leader_score}) should score >= base ({base_score})"
+    assert leader_detail["has_leadership"] is True
+    print(f"  Base trajectory: {base_score:.3f}, With leadership: {leader_score:.3f}")
+
+
+def test_reasoning_has_content():
+    """Reasoning should contain actual profile data, not be empty."""
+    candidates = load_sample()
+    for c in candidates[:5]:
+        should_keep, _, _ = coarse_filter(c)
+        if should_keep:
+            scored = score_candidate(c)
+            reasoning = generate_reasoning(scored)
+            assert len(reasoning) > 20, f"Reasoning too short: {reasoning}"
+            assert scored["profile"].get("current_title", "X") in reasoning or "Unknown" in reasoning
+            break
+    print("  Reasoning contains profile data")
+
+
 if __name__ == "__main__":
     tests = [
         ("Honeypot Detection", test_honeypot_detection),
@@ -105,6 +215,11 @@ if __name__ == "__main__":
         ("Title Scoring", test_title_scoring),
         ("Experience Fit", test_experience_fit),
         ("Full Pipeline", test_full_pipeline),
+        ("Tie-Break Correctness", test_tiebreak_correctness),
+        ("Anti-Pattern: Consulting Only", test_anti_pattern_consulting_only),
+        ("Anti-Pattern: Keyword Stuffer", test_anti_pattern_keyword_stuffer),
+        ("Career Trajectory: Leadership Bonus", test_career_trajectory_leadership_bonus),
+        ("Reasoning Quality", test_reasoning_has_content),
     ]
 
     passed = 0
