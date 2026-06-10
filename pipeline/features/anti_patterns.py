@@ -38,7 +38,7 @@ def _is_keyword_stuffer(candidate: dict) -> bool:
     # Count AI-related skills
     ai_skill_count = 0
     for skill in candidate.get("skills", []):
-        name = skill.get("name", "").lower()
+        name = skill.get("name", "").lower().strip()
         canonical = SKILL_ALIASES.get(name, name)
         if canonical in SKILL_TIER_LOOKUP and SKILL_TIER_LOOKUP[canonical] <= 2:
             ai_skill_count += 1
@@ -71,15 +71,17 @@ def _is_cv_only(candidate: dict) -> bool:
     cv_count = 0
     nlp_count = 0
     for skill in skills:
-        name = skill.get("name", "").lower()
+        name = skill.get("name", "").lower().strip()
         if any(kw in name for kw in cv_keywords):
             cv_count += 1
         if any(kw in name for kw in nlp_ir_keywords):
             nlp_count += 1
 
-    # Also check career descriptions
+    # Check career descriptions for both CV and NLP evidence
     for job in candidate.get("career_history", []):
         desc = job.get("description", "").lower()
+        if any(kw in desc for kw in cv_keywords):
+            cv_count += 1
         if any(kw in desc for kw in nlp_ir_keywords):
             nlp_count += 1
 

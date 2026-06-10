@@ -44,6 +44,10 @@ def generate_reasoning(scored: dict) -> str:
         total_jobs = career_detail.get("total_jobs", 0)
         if ml_jobs > 0:
             strengths.append(f"{ml_jobs}/{total_jobs} roles in ML/AI")
+    if career_detail.get("has_leadership"):
+        strengths.append("ML leadership experience")
+    if career_detail.get("has_startup_exp"):
+        strengths.append("startup/early-stage background")
     if matched_skills:
         top_skills = matched_skills[:4]
         strengths.append(f"skills: {', '.join(top_skills)}")
@@ -91,30 +95,20 @@ def rank_and_output(scored_candidates: list[dict], output_path: str) -> list[dic
 
     top_100 = scored_candidates[:100]
 
-    # Assign ranks and generate reasoning
-    # Use enough decimal precision to avoid artificial ties,
-    # but if ties remain after rounding, ensure candidate_id ascending order
+    # Round scores first, then re-sort to handle any ties created by rounding
+    for s in top_100:
+        s["_rounded_score"] = round(s["composite_score"], 8)
+    top_100.sort(key=lambda x: (-x["_rounded_score"], x["candidate_id"]))
+
+    # Assign ranks and generate reasoning AFTER final sort order is locked
     rows = []
     for rank, scored in enumerate(top_100, start=1):
-        reasoning = generate_reasoning(scored)
         rows.append({
             "candidate_id": scored["candidate_id"],
             "rank": rank,
-            "score": round(scored["composite_score"], 8),
-            "reasoning": reasoning,
+            "score": scored["_rounded_score"],
+            "reasoning": generate_reasoning(scored),
         })
-
-    # Post-process: fix any tie-break violations after rounding
-    for i in range(len(rows) - 1):
-        if rows[i]["score"] == rows[i + 1]["score"]:
-            if rows[i]["candidate_id"] > rows[i + 1]["candidate_id"]:
-                # Swap ranks but keep scores
-                rows[i]["candidate_id"], rows[i + 1]["candidate_id"] = (
-                    rows[i + 1]["candidate_id"], rows[i]["candidate_id"]
-                )
-                rows[i]["reasoning"], rows[i + 1]["reasoning"] = (
-                    rows[i + 1]["reasoning"], rows[i]["reasoning"]
-                )
 
     # Write CSV
     path = Path(output_path)
