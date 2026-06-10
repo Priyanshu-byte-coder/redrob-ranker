@@ -13,7 +13,7 @@ team_members:
 
 github_repo: "https://github.com/Priyanshu-byte-coder/redrob-ranker"
 
-sandbox_link: "https://huggingface.co/spaces/Priyanshu-byte-coder/redrob-ranker"
+sandbox_link: "https://huggingface.co/spaces/bladebutcher/redrob-ranker"
 
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 
