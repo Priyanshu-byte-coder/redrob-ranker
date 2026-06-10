@@ -11,9 +11,9 @@ team_members:
     email: "doshipriyanshu3@gmail.com"
     role: "Solo Participant"
 
-github_repo: "https://github.com/UPDATE_USERNAME/redrob-ranker"
+github_repo: "https://github.com/Priyanshu-byte-coder/redrob-ranker"
 
-sandbox_link: "https://huggingface.co/spaces/UPDATE_USERNAME/redrob-ranker"
+sandbox_link: "https://huggingface.co/spaces/Priyanshu-byte-coder/redrob-ranker"
 
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 
