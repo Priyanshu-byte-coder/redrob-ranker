@@ -222,6 +222,14 @@ PRODUCT_COMPANIES = {
     # Fictional companies in dataset that signal product work
     "pied piper", "hooli", "stark industries", "wayne enterprises",
     "initech", "globex", "acme corp", "dunder mifflin",
+    # Indian AI-native companies observed in dataset
+    "sarvam ai", "sarvam", "mad street den", "niramai", "haptik",
+    "yellow.ai", "yellowai", "genpact ai", "krutrim", "ola krutrim",
+    "vernacular.ai", "observe.ai", "uniphore", "arya.ai", "artivatic",
+    "darwinbox", "leadsquared", "capillary technologies",
+    "sigmoid", "fractal analytics", "mu sigma", "absolutdata",
+    "latentview analytics", "bridgei2i", "tiger analytics",
+    "thoughtworks",  # Product-oriented consulting
 }
 
 # ============================================================================
@@ -234,8 +242,11 @@ LOCATION_TIER1_INDIA = {
 
 LOCATION_TIER2_INDIA = {
     "bangalore", "bengaluru", "mumbai", "delhi", "new delhi",
-    "hyderabad", "chennai", "kolkata", "gurgaon", "gurugram",
+    "hyderabad", "secunderabad", "chennai", "kolkata", "gurgaon", "gurugram",
     "ghaziabad", "faridabad", "greater noida",
+    # Strong tech presence cities in dataset
+    "vizag", "visakhapatnam", "trivandrum", "thiruvananthapuram",
+    "kochi", "cochin", "pune",  # Pune also here (already tier1 for exact match)
 }
 
 LOCATION_TIER3_INDIA = {
@@ -287,6 +298,14 @@ PRODUCTION_ML_KEYWORDS = {
     "training pipeline", "inference pipeline", "online serving",
     "offline evaluation", "online evaluation", "canary deployment",
     "blue-green", "shadow mode", "model registry",
+    # Additional production signals
+    "end-to-end", "end to end", "scaled", "scale",
+    "millions of", "billion", "users", "requests per second",
+    "qps", "p99", "p95", "percentile", "sla", "slo",
+    "reliability", "uptime", "on-call", "oncall", "incident",
+    "data drift", "concept drift", "retraining", "feedback loop",
+    "recruiter engagement", "click-through", "conversion rate",
+    "precision", "recall", "ndcg", "mrr", "map@",
 }
 
 # ML/AI domain keywords (medium signal)
