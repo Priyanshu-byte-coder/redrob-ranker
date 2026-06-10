@@ -3,6 +3,8 @@ Career Trajectory scorer.
 THE key differentiator — analyzes career_history descriptions for actual ML work.
 Catches "plain-language Tier 5s" and penalizes keyword stuffers.
 """
+import re
+
 from jd.taxonomy import (
     PRODUCTION_ML_KEYWORDS,
     ML_DOMAIN_KEYWORDS,
@@ -11,9 +13,26 @@ from jd.taxonomy import (
     PRODUCT_COMPANIES,
 )
 
+# Leadership signals — founding team needs people who can lead
+LEADERSHIP_KEYWORDS = {
+    "led", "lead", "managed", "built team", "hired",
+    "mentored", "architected", "designed system",
+    "technical lead", "tech lead", "team lead",
+    "principal", "staff", "founding", "co-founded",
+    "head of", "director of",
+}
+
+# Startup / early-stage signals — founding team fit
+STARTUP_KEYWORDS = {
+    "startup", "early-stage", "early stage", "seed",
+    "series a", "founding", "co-founder", "first engineer",
+    "0-to-1", "zero to one", "greenfield", "from scratch",
+    "built from ground up", "mvp", "minimum viable",
+}
+
 
 def _count_keyword_hits(text: str, keywords: set) -> int:
-    """Count how many distinct keywords appear in text."""
+    """Count how many distinct keywords appear in text (substring match)."""
     text_lower = text.lower()
     return sum(1 for kw in keywords if kw in text_lower)
 
@@ -29,16 +48,17 @@ def _analyze_descriptions(candidate: dict) -> dict:
     recent_ml_months = 0
     consulting_job_count = 0
     product_company_count = 0
+    has_leadership = False
+    has_startup_exp = False
 
     for job in career:
         desc = job.get("description", "")
         company = job.get("company", "").lower()
+        title = job.get("title", "").lower()
         all_text += " " + desc
 
-        desc_lower = desc.lower()
         ml_hits = _count_keyword_hits(desc, ML_DOMAIN_KEYWORDS)
         prod_hits = _count_keyword_hits(desc, PRODUCTION_ML_KEYWORDS)
-        consulting_hits = _count_keyword_hits(desc, CONSULTING_KEYWORDS)
 
         if ml_hits >= 2:
             ml_job_count += 1
@@ -54,6 +74,13 @@ def _analyze_descriptions(candidate: dict) -> dict:
         if company in PRODUCT_COMPANIES:
             product_company_count += 1
 
+        # Leadership and startup signals (check desc + title)
+        combined = (desc + " " + title).lower()
+        if _count_keyword_hits(combined, LEADERSHIP_KEYWORDS) >= 1:
+            has_leadership = True
+        if _count_keyword_hits(combined, STARTUP_KEYWORDS) >= 1:
+            has_startup_exp = True
+
     total_ml_keywords = _count_keyword_hits(all_text, ML_DOMAIN_KEYWORDS)
     total_prod_keywords = _count_keyword_hits(all_text, PRODUCTION_ML_KEYWORDS)
 
@@ -66,6 +93,8 @@ def _analyze_descriptions(candidate: dict) -> dict:
         "recent_ml_months": recent_ml_months,
         "consulting_job_count": consulting_job_count,
         "product_company_count": product_company_count,
+        "has_leadership": has_leadership,
+        "has_startup_exp": has_startup_exp,
     }
 
 
@@ -123,12 +152,18 @@ def score_career_trajectory(candidate: dict) -> tuple[float, dict]:
     ml_career_fraction = min(1.0, analysis["recent_ml_months"] / total_months)
     progression_score = ml_career_fraction
 
+    # Leadership + startup bonuses (founding team role values these)
+    leadership_bonus = 0.06 if analysis["has_leadership"] else 0.0
+    startup_bonus = 0.04 if analysis["has_startup_exp"] else 0.0
+
     # Composite
     score = (
-        0.40 * ml_evidence
+        0.35 * ml_evidence
         + 0.25 * prod_score
-        + 0.20 * product_score
-        + 0.15 * progression_score
+        + 0.18 * product_score
+        + 0.12 * progression_score
+        + leadership_bonus
+        + startup_bonus
     )
 
     detail = {
@@ -138,6 +173,8 @@ def score_career_trajectory(candidate: dict) -> tuple[float, dict]:
         "progression": progression_score,
         "ml_jobs": analysis["ml_job_count"],
         "total_jobs": analysis["total_jobs"],
+        "has_leadership": analysis["has_leadership"],
+        "has_startup_exp": analysis["has_startup_exp"],
     }
 
     return min(1.0, score), detail
