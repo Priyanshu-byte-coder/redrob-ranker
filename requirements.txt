@@ -1,3 +1,3 @@
 pyyaml>=6.0
 tqdm>=4.65
-streamlit>=1.30
+gradio>=4.0.0
