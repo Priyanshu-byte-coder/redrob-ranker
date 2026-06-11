@@ -1,5 +1,10 @@
-# Redrob Hackathon -- Submission Metadata
-team_name: "solo-priyanshu"
+# Redrob Hackathon — Submission Metadata
+# Mirrors portal metadata per submission_spec.md Section 10.2
+
+# ============================================================================
+# Team identity
+# ============================================================================
+team_name: "Umbrella.co"
 
 primary_contact:
   name: "Priyanshu"
@@ -11,23 +16,32 @@ team_members:
     email: "doshipriyanshu3@gmail.com"
     role: "Solo Participant"
 
+# ============================================================================
+# Code and reproducibility
+# ============================================================================
 github_repo: "https://github.com/Priyanshu-byte-coder/redrob-ranker"
 
 sandbox_link: "https://huggingface.co/spaces/bladebutcher/redrob-ranker"
 
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 
+# ============================================================================
+# Compute environment
+# ============================================================================
 compute:
   platform: "Windows 11, Intel CPU"
   cpu_cores: 8
   ram_gb: 16
   python_version: "3.12"
-  os: "Windows 11"
+  os: "Windows 11 Home"
   uses_gpu_for_inference: false
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
 
+# ============================================================================
+# AI tools declaration
+# ============================================================================
 ai_tools_used:
   - "Claude"
   - "Claude Code"
@@ -36,19 +50,30 @@ ai_usage_summary: |
   Used Claude and Claude Code for architecture discussion, code review,
   and iterative development of the ranking pipeline. No candidate data
   was fed to any LLM. The ranking system uses purely rule-based scoring
-  with hand-crafted features -- no AI inference during ranking.
+  with hand-crafted features — no AI inference during ranking.
 
+# ============================================================================
+# Approach summary
+# ============================================================================
 methodology_summary: |
-  Rule-based multi-signal ranker with 4-stage pipeline. Stage 0 detects
-  ~80 honeypot candidates via date arithmetic and skill impossibility checks.
-  Stage 1 coarse-filters 100K to ~4K using title classification and career
-  description analysis. Stage 2 scores across 8 dimensions: title alignment,
-  skill match with trust multiplier, career trajectory (production ML evidence
-  in descriptions), experience fit (5-9yr bell curve), location (India Tier-1),
-  education, behavioral signals, and anti-pattern penalties (consulting-only,
-  keyword stuffers, title chasers). Stage 3 ranks and generates per-candidate
-  reasoning. Runtime: ~50s CPU-only. No embeddings, no LLM calls.
+  Rule-based multi-signal ranker with 4-stage pipeline using 21/22 Redrob
+  signals plus profile headline/summary text. Stage 0 detects ~67 honeypot
+  candidates via date arithmetic, skill impossibility checks, and synthetic
+  signal detection. Stage 1 coarse-filters 100K to ~40K using title
+  classification and career description analysis. Stage 2 scores across 8
+  weighted dimensions: title alignment (0.20), skill match with trust
+  multiplier + platform assessment boost (0.20), career trajectory with
+  production ML evidence in descriptions + headline/summary (0.20),
+  experience fit via 5-9yr bell curve (0.10), behavioral signals using 16
+  components from Redrob platform data (0.10), location preference (0.08),
+  anti-pattern penalties for consulting-only/keyword-stuffers/title-chasers
+  (0.07), and education (0.05). Stage 3 ranks and generates per-candidate
+  reasoning from actual profile fields. Runtime: 67s CPU-only on 100K.
+  No embeddings, no LLM calls, no GPU. 0 honeypots in top 100.
 
+# ============================================================================
+# Declarations
+# ============================================================================
 declarations:
   read_submission_spec: true
   code_is_original_work: true

@@ -48,13 +48,27 @@ def _get_title_score(title: str) -> float:
     return 0.15  # Unknown title default
 
 
+def _headline_boost(headline: str) -> float:
+    """Boost from profile headline if it signals AI/ML focus."""
+    lower = headline.lower()
+    if any(kw in lower for kw in ("ai engineer", "ml engineer", "machine learning engineer")):
+        return 0.10
+    if any(kw in lower for kw in ("nlp", "deep learning", "artificial intelligence",
+                                   "computer vision", "data scientist")):
+        return 0.07
+    if any(kw in lower for kw in ("founding", "staff", "principal", "lead ai", "lead ml")):
+        return 0.05
+    return 0.0
+
+
 def score_title_alignment(candidate: dict) -> float:
     """
-    Score based on current title + career trajectory titles.
-    Current title gets 70% weight, best historical title gets 30%.
+    Score based on current title + career trajectory titles + headline signal.
+    Current title gets 65% weight, trajectory 25%, headline 10%.
     """
     profile = candidate.get("profile", {})
     current_title = profile.get("current_title", "")
+    headline = profile.get("headline", "")
 
     current_score = _get_title_score(current_title)
 
@@ -67,8 +81,10 @@ def score_title_alignment(candidate: dict) -> float:
             best_historical = max(best_historical, title_score)
 
     # If career history shows ML progression, boost
-    # (e.g., currently Backend Engineer but was previously Data Scientist)
     trajectory_score = max(current_score, best_historical * 0.8)
 
-    final = 0.70 * current_score + 0.30 * trajectory_score
+    # Headline provides additional signal about self-identified role
+    h_boost = _headline_boost(headline)
+
+    final = 0.65 * current_score + 0.25 * trajectory_score + h_boost
     return min(1.0, final)

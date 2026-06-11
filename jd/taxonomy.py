@@ -230,6 +230,12 @@ PRODUCT_COMPANIES = {
     "sigmoid", "fractal analytics", "mu sigma", "absolutdata",
     "latentview analytics", "bridgei2i", "tiger analytics",
     "thoughtworks",  # Product-oriented consulting
+    # Additional Indian product companies observed in top-100 rankings
+    "inmobi", "glance", "pharmeasy", "policybazaar",
+    "rephrase.ai", "vedantu", "upgrad", "locobuzz",
+    "saarthi.ai", "aganitha", "wysa", "verloop.io",
+    "coviam", "belong.co", "belong", "stanza living",
+    "one97", "paytm money", "cuemath", "toppr",
 }
 
 # ============================================================================

@@ -16,7 +16,7 @@ license: mit
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![CPU Only](https://img.shields.io/badge/compute-CPU%20only-orange.svg)](#)
-[![Runtime](https://img.shields.io/badge/runtime-~50s%20for%20100K-brightgreen.svg)](#performance)
+[![Runtime](https://img.shields.io/badge/runtime-~65s%20for%20100K-brightgreen.svg)](#performance)
 
 > **[Live Demo on HuggingFace Spaces](https://huggingface.co/spaces/bladebutcher/redrob-ranker)**
 
@@ -26,7 +26,7 @@ A multi-signal candidate ranking system for the **Senior AI Engineer — Foundin
 
 ## Architecture
 
-The system uses a **4-stage funnel pipeline** that processes 100K candidates in ~50 seconds on CPU:
+The system uses a **4-stage funnel pipeline** that processes 100K candidates in ~65 seconds on CPU, leveraging **21/22 Redrob behavioral signals** + profile text analysis:
 
 ```
 100K candidates
@@ -67,13 +67,13 @@ Embedding similarity treats all keywords equally. Our system reads **career traj
 | Dimension | Weight | What It Measures |
 |-----------|-------:|-----------------|
 | Title Alignment | 20% | How well current_title maps to "Senior AI Engineer" (62 titles scored) |
-| Skills Match | 20% | 3-tier skill taxonomy with trust multiplier (178 skills tracked) |
-| Career Trajectory | 20% | Description text analysis for production ML evidence + leadership signals |
+| Skills Match | 20% | 3-tier taxonomy + trust multiplier + platform assessment boost (178 skills) |
+| Career Trajectory | 20% | Description + headline/summary analysis for production ML + leadership |
 | Experience Fit | 10% | Bell curve centered at 7yr (JD range: 5-9yr) |
-| Behavioral Signals | 10% | Notice period, response rate, activity recency, GitHub, verifications |
+| Behavioral Signals | 10% | 16 components from 21/22 Redrob signals (notice, response, recency, market demand, etc.) |
 | Location | 8% | Pune/Noida preferred, Tier-1 India acceptable |
 | Anti-Pattern Penalty | 7% | Consulting-only, keyword stuffer, title chaser, CV-only |
-| Education | 5% | CS/AI field relevance + institution tier |
+| Education | 5% | CS/AI field relevance + institution tier + ML certification bonus |
 
 ### Honeypot Detection
 
@@ -149,7 +149,7 @@ python app.py
 
 | Metric | Value |
 |--------|-------|
-| Total Runtime | ~50 seconds |
+| Total Runtime | ~65 seconds |
 | Memory Usage | <2 GB |
 | Candidates Processed | 100,000 |
 | After Filtering | ~40,000 |
@@ -177,7 +177,7 @@ redrob-ranker/
 │       ├── experience_fit.py  # Bell curve, 5-9yr sweet spot
 │       ├── location_score.py  # India tier-based scoring
 │       ├── education_score.py # Field + institution + degree level
-│       ├── behavioral_signals.py # 8-component availability score
+│       ├── behavioral_signals.py # 16-component availability score (21/22 signals)
 │       └── anti_patterns.py   # 4 detectors, additive penalties
 ├── jd/
 │   ├── requirements.py        # Structured JD representation
@@ -204,7 +204,7 @@ redrob-ranker/
 
 2. **Trust but verify.** Skills with "expert" proficiency and 0 months duration get 0.3x credit. Skills backed by experience and endorsements get full credit.
 
-3. **Availability matters.** A perfect-on-paper candidate who hasn't logged in for 6 months with a 5% response rate is not actually available. Behavioral signals serve as an availability multiplier.
+3. **Availability matters.** A perfect-on-paper candidate who hasn't logged in for 6 months with a 5% response rate is not actually available. We use 18/22 Redrob platform signals — including market demand (saved by recruiters), engagement speed, and offer acceptance history.
 
 4. **Product > consulting.** The JD explicitly penalizes consulting-only careers. We track 54 consulting companies and 38+ product companies (including Indian AI startups like Sarvam AI, Haptik, Yellow.ai).
 

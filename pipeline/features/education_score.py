@@ -1,8 +1,21 @@
 """
 Education scorer.
-Field relevance + institution tier + degree level.
+Field relevance + institution tier + degree level + certifications.
 """
 from jd.taxonomy import EDUCATION_FIELDS_HIGH, EDUCATION_FIELDS_MEDIUM
+
+# ML/AI relevant certification keywords
+CERT_KEYWORDS_HIGH = {
+    "machine learning", "deep learning", "artificial intelligence",
+    "tensorflow", "pytorch", "nlp", "natural language processing",
+    "computer vision", "neural network", "reinforcement learning",
+    "ml engineer", "ai engineer", "mlops",
+}
+CERT_KEYWORDS_MEDIUM = {
+    "data science", "data engineering", "cloud ml", "sagemaker",
+    "vertex ai", "azure ai", "aws ml", "gcp ml",
+    "python", "statistics", "big data", "apache spark",
+}
 
 
 def _field_relevance(field_of_study: str) -> float:
@@ -40,23 +53,48 @@ def _degree_bonus(degree: str) -> float:
     return 0.0  # B.Tech, B.E., etc.
 
 
+def _cert_bonus(candidate: dict) -> float:
+    """Bonus for ML/AI-relevant certifications. Max 0.15."""
+    certs = candidate.get("certifications", [])
+    if not certs:
+        return 0.0
+
+    high_count = 0
+    med_count = 0
+    for cert in certs:
+        name = cert.get("name", "").lower()
+        issuer = cert.get("issuer", "").lower()
+        combined = f"{name} {issuer}"
+        if any(kw in combined for kw in CERT_KEYWORDS_HIGH):
+            high_count += 1
+        elif any(kw in combined for kw in CERT_KEYWORDS_MEDIUM):
+            med_count += 1
+
+    bonus = min(high_count, 3) * 0.04 + min(med_count, 2) * 0.02
+    return min(0.15, bonus)
+
+
 def score_education(candidate: dict) -> float:
-    """Score education relevance. Takes best education entry."""
+    """Score education relevance. Takes best education entry + certification bonus."""
     education = candidate.get("education", [])
     if not education:
-        return 0.3  # No education info — don't penalize heavily
+        base = 0.3  # No education info — don't penalize heavily
+    else:
+        best_score = 0.0
+        for edu in education:
+            field = edu.get("field_of_study", "")
+            tier = edu.get("tier", "unknown")
+            degree = edu.get("degree", "")
 
-    best_score = 0.0
-    for edu in education:
-        field = edu.get("field_of_study", "")
-        tier = edu.get("tier", "unknown")
-        degree = edu.get("degree", "")
+            field_score = _field_relevance(field)
+            tier_adj = _tier_bonus(tier)
+            degree_adj = _degree_bonus(degree)
 
-        field_score = _field_relevance(field)
-        tier_adj = _tier_bonus(tier)
-        degree_adj = _degree_bonus(degree)
+            score = field_score * 0.6 + (0.5 + tier_adj) * 0.25 + (0.4 + degree_adj) * 0.15
+            best_score = max(best_score, score)
+        base = best_score
 
-        score = field_score * 0.6 + (0.5 + tier_adj) * 0.25 + (0.4 + degree_adj) * 0.15
-        best_score = max(best_score, score)
+    # Certification bonus on top
+    cert = _cert_bonus(candidate)
 
-    return min(1.0, best_score)
+    return min(1.0, base + cert)

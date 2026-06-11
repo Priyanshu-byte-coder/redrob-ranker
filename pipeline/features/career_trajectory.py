@@ -38,8 +38,9 @@ def _count_keyword_hits(text: str, keywords: set) -> int:
 
 
 def _analyze_descriptions(candidate: dict) -> dict:
-    """Analyze all career_history descriptions for ML evidence."""
+    """Analyze all career_history descriptions + profile text for ML evidence."""
     career = candidate.get("career_history", [])
+    profile = candidate.get("profile", {})
 
     all_text = ""
     ml_job_count = 0
@@ -50,6 +51,18 @@ def _analyze_descriptions(candidate: dict) -> dict:
     product_company_count = 0
     has_leadership = False
     has_startup_exp = False
+
+    # Include profile headline and summary in ML keyword analysis
+    headline = profile.get("headline", "")
+    summary = profile.get("summary", "")
+    profile_text = f"{headline} {summary}"
+    all_text += " " + profile_text
+
+    # Check headline/summary for leadership and startup signals
+    if _count_keyword_hits(profile_text, LEADERSHIP_KEYWORDS) >= 1:
+        has_leadership = True
+    if _count_keyword_hits(profile_text, STARTUP_KEYWORDS) >= 1:
+        has_startup_exp = True
 
     for job in career:
         desc = job.get("description", "")

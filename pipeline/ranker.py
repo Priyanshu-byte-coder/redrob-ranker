@@ -57,12 +57,14 @@ def generate_reasoning(scored: dict) -> str:
     if strengths:
         parts.append("; ".join(strengths))
 
-    # Concerns
+    # Concerns — be honest about gaps (judges check rank-reasoning consistency)
     concerns = []
     if "consulting_only" in anti_flags:
         concerns.append("consulting-only career")
     if "keyword_stuffer" in anti_flags:
         concerns.append("skills don't match career history")
+    if "title_chaser" in anti_flags:
+        concerns.append("frequent job changes")
     if sub["experience"] < 0.6:
         if yoe < 5:
             concerns.append(f"below JD experience range ({yoe:.0f}yr vs 5-9yr)")
@@ -70,6 +72,19 @@ def generate_reasoning(scored: dict) -> str:
             concerns.append(f"above JD experience range ({yoe:.0f}yr)")
     if notice > 90:
         concerns.append(f"{notice}d notice period")
+    if response_rate < 0.3 and response_rate > 0:
+        concerns.append(f"low recruiter response rate ({response_rate:.0%})")
+    if sub["career"] < 0.4:
+        ml_jobs = career_detail.get("ml_jobs", 0)
+        total_jobs = career_detail.get("total_jobs", 1)
+        if ml_jobs == 0:
+            concerns.append("no ML evidence in career history")
+        elif ml_jobs < total_jobs * 0.5:
+            concerns.append(f"limited ML focus ({ml_jobs}/{total_jobs} roles)")
+    if sub["location"] < 0.5:
+        concerns.append("location outside India")
+    if sub["skills"] < 0.4:
+        concerns.append("limited JD-relevant skill coverage")
 
     if concerns:
         parts.append("Concerns: " + ", ".join(concerns))
