@@ -56,7 +56,7 @@ ai_usage_summary: |
 # Approach summary
 # ============================================================================
 methodology_summary: |
-  Rule-based multi-signal ranker with 4-stage pipeline using 21/22 Redrob
+  Rule-based multi-signal ranker with 4-stage pipeline using 22/22 Redrob
   signals plus profile headline/summary text. Stage 0 detects ~67 honeypot
   candidates via date arithmetic, skill impossibility checks, and synthetic
   signal detection. Stage 1 coarse-filters 100K to ~40K using title
@@ -64,11 +64,11 @@ methodology_summary: |
   weighted dimensions: title alignment (0.20), skill match with trust
   multiplier + platform assessment boost (0.20), career trajectory with
   production ML evidence in descriptions + headline/summary (0.20),
-  experience fit via 5-9yr bell curve (0.10), behavioral signals using 16
+  experience fit via 5-9yr bell curve (0.10), behavioral signals using 17
   components from Redrob platform data (0.10), location preference (0.08),
   anti-pattern penalties for consulting-only/keyword-stuffers/title-chasers
   (0.07), and education (0.05). Stage 3 ranks and generates per-candidate
-  reasoning from actual profile fields. Runtime: 67s CPU-only on 100K.
+  reasoning from actual profile fields. Runtime: 25s CPU-only on 100K.
   No embeddings, no LLM calls, no GPU. 0 honeypots in top 100.
 
 # ============================================================================

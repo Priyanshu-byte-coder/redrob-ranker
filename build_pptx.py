@@ -88,7 +88,7 @@ def build():
 
             first_p(tf, "What is your proposed solution?", size=12, bold=True, color=ACCENT)
             add_p(tf, "")
-            add_p(tf, "A rule-based multi-signal ranking pipeline that processes 100K candidates in ~67 seconds on CPU. Uses 21/22 Redrob signals + profile text. No GPU, no LLM API calls, no network.", size=10, color=DARK)
+            add_p(tf, "A rule-based multi-signal ranking pipeline that processes 100K candidates in ~25 seconds on CPU. Uses 22/22 Redrob signals + profile text. No GPU, no LLM API calls, no network.", size=10, color=DARK)
             add_p(tf, "")
             add_p(tf, "4-Stage Funnel:", size=10, bold=True, color=ACCENT)
             add_p(tf, "  Stage 0:  Honeypot Detection  (6 rules \u2192 67 impossible profiles caught)", size=9, color=MED)
@@ -124,7 +124,7 @@ def build():
             add_p(tf, "     Descriptions > titles > skills listed", size=8, color=DIM)
             add_p(tf, "2.  Trust Multiplier \u2014 \"Expert\" proficiency + 0mo duration = 0.3\u00d7 credit", size=9, bold=True, color=DARK)
             add_p(tf, "3.  Anti-Patterns \u2014 consulting-only, keyword stuffers, title chasers", size=9, bold=True, color=DARK)
-            add_p(tf, "4.  Behavioral Signals \u2014 16 components from 21/22 Redrob signals", size=9, bold=True, color=DARK)
+            add_p(tf, "4.  Behavioral Signals \u2014 17 components from 22/22 Redrob signals", size=9, bold=True, color=DARK)
             add_p(tf, "5.  Skill Assessments \u2014 platform-validated scores boost trust", size=9, bold=True, color=DARK)
             add_p(tf, "6.  Profile Headline/Summary \u2014 ML keywords in professional text", size=9, bold=True, color=DARK)
 
@@ -229,7 +229,7 @@ def build():
             add_p(tf, "")
             add_p(tf, "\u2022  Embeddings treat all keywords equally \u2014 can't distinguish real ML engineers from stuffers", size=9, color=MED)
             add_p(tf, "\u2022  Rules encode domain knowledge: career trajectories, company classification, trust multipliers", size=9, color=MED)
-            add_p(tf, "\u2022  No GPU, no API costs \u2014 ~67 seconds on CPU", size=9, color=MED)
+            add_p(tf, "\u2022  No GPU, no API costs \u2014 ~25 seconds on CPU", size=9, color=MED)
             add_p(tf, "\u2022  Every decision fully explainable and auditable", size=9, color=MED)
 
     # ===================== SLIDE 10: Submission Assets =====================
@@ -252,7 +252,7 @@ def build():
             add_p(tf, "\u2022  10 automated tests, all passing", size=10, color=DARK)
             add_p(tf, "\u2022  Submission validator passes all checks", size=10, color=DARK)
             add_p(tf, "\u2022  0 honeypots in top 100, top 10 manually verified", size=10, color=DARK)
-            add_p(tf, "\u2022  67s runtime (limit: 5 min)  |  <2GB RAM (limit: 16GB)", size=10, color=DARK)
+            add_p(tf, "\u2022  25s runtime (limit: 5 min)  |  <2GB RAM (limit: 16GB)", size=10, color=DARK)
 
     # ===================== SLIDE 11: Thank You (DARK bg) =====================
     s = slides[10]

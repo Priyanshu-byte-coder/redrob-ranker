@@ -11,6 +11,8 @@ from jd.taxonomy import (
     CONSULTING_KEYWORDS,
     CONSULTING_COMPANIES,
     PRODUCT_COMPANIES,
+    AI_INDUSTRIES,
+    TECH_INDUSTRIES,
 )
 
 # Leadership signals — founding team needs people who can lead
@@ -51,6 +53,17 @@ def _analyze_descriptions(candidate: dict) -> dict:
     product_company_count = 0
     has_leadership = False
     has_startup_exp = False
+    ai_industry_jobs = 0
+    small_company_jobs = 0
+
+    # Check current industry and company size from profile
+    current_industry = profile.get("current_industry", "").lower()
+    if any(ind in current_industry for ind in AI_INDUSTRIES):
+        ai_industry_jobs += 1  # Count current as well
+    current_comp_size = profile.get("current_company_size", "")
+    if current_comp_size in ("1-10", "11-50", "51-200"):
+        small_company_jobs += 1
+        has_startup_exp = True  # Small company = startup-like
 
     # Include profile headline and summary in ML keyword analysis
     headline = profile.get("headline", "")
@@ -87,6 +100,16 @@ def _analyze_descriptions(candidate: dict) -> dict:
         if company in PRODUCT_COMPANIES:
             product_company_count += 1
 
+        # Industry classification — AI/ML industries are strong signals
+        industry = job.get("industry", "").lower()
+        if any(ind in industry for ind in AI_INDUSTRIES):
+            ai_industry_jobs += 1
+
+        # Company size — small companies signal startup/founding-team fit
+        comp_size = job.get("company_size", "")
+        if comp_size in ("1-10", "11-50", "51-200"):
+            small_company_jobs += 1
+
         # Leadership and startup signals (check desc + title)
         combined = (desc + " " + title).lower()
         if _count_keyword_hits(combined, LEADERSHIP_KEYWORDS) >= 1:
@@ -108,6 +131,8 @@ def _analyze_descriptions(candidate: dict) -> dict:
         "product_company_count": product_company_count,
         "has_leadership": has_leadership,
         "has_startup_exp": has_startup_exp,
+        "ai_industry_jobs": ai_industry_jobs,
+        "small_company_jobs": small_company_jobs,
     }
 
 
@@ -169,14 +194,22 @@ def score_career_trajectory(candidate: dict) -> tuple[float, dict]:
     leadership_bonus = 0.06 if analysis["has_leadership"] else 0.0
     startup_bonus = 0.04 if analysis["has_startup_exp"] else 0.0
 
+    # AI industry bonus — working in AI/ML industry is strong evidence
+    ai_industry_bonus = min(0.05, analysis["ai_industry_jobs"] * 0.03)
+
+    # Small company bonus — startup/founding team culture fit
+    small_co_bonus = min(0.03, analysis["small_company_jobs"] * 0.02)
+
     # Composite
     score = (
-        0.35 * ml_evidence
-        + 0.25 * prod_score
-        + 0.18 * product_score
-        + 0.12 * progression_score
+        0.32 * ml_evidence
+        + 0.23 * prod_score
+        + 0.16 * product_score
+        + 0.11 * progression_score
         + leadership_bonus
         + startup_bonus
+        + ai_industry_bonus
+        + small_co_bonus
     )
 
     detail = {
@@ -188,6 +221,7 @@ def score_career_trajectory(candidate: dict) -> tuple[float, dict]:
         "total_jobs": analysis["total_jobs"],
         "has_leadership": analysis["has_leadership"],
         "has_startup_exp": analysis["has_startup_exp"],
+        "ai_industry_jobs": analysis["ai_industry_jobs"],
     }
 
     return min(1.0, score), detail

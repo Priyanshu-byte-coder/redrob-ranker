@@ -23,9 +23,18 @@ TITLE_SCORES = {
     "NLP Engineer": 0.88,
     "Search Engineer": 0.88,
     "Recommendation Systems Engineer": 0.88,
+    # Strong seniority titles
+    "Principal Machine Learning Engineer": 0.97,
+    "Principal ML Engineer": 0.97,
+    "Staff AI Engineer": 0.96,
+    "Founding Engineer": 0.88,
+    "Founding ML Engineer": 0.95,
     # Good AI-adjacent
     "AI Research Engineer": 0.85,
     "AI Specialist": 0.83,
+    "Research Scientist": 0.80,
+    "Senior Research Scientist": 0.83,
+    "Applied Scientist": 0.88,
     "Senior Data Scientist": 0.82,
     "Data Scientist": 0.78,
     "Computer Vision Engineer": 0.72,  # JD says CV-only is mild penalty
@@ -88,7 +97,7 @@ TIER1_SKILLS = {
     "FAISS", "Pinecone", "Qdrant", "Milvus", "Weaviate", "Chroma",
     "pgvector", "OpenSearch", "Elasticsearch",
     # Core ML/DL
-    "PyTorch", "TensorFlow", "Deep Learning", "Machine Learning",
+    "PyTorch", "TensorFlow", "JAX", "Deep Learning", "Machine Learning",
     "Neural Networks",
     # Python
     "Python",
@@ -110,6 +119,7 @@ TIER2_SKILLS = {
     # MLOps
     "MLOps", "MLflow", "Kubeflow", "Model Deployment", "Model Serving",
     "TensorFlow Serving", "TorchServe", "Triton",
+    "Weights & Biases", "Weights and Biases", "wandb",
     # Search
     "Search Systems", "Hybrid Search", "Query Understanding",
     "Search Ranking",
@@ -131,6 +141,7 @@ TIER3_SKILLS = {
     "Data Pipelines", "ETL",
     # Cloud
     "AWS", "GCP", "Azure", "SageMaker",
+    "Vertex AI", "GCP Vertex AI", "Azure ML", "Azure Machine Learning",
     # Other ML
     "Computer Vision", "Reinforcement Learning", "Statistical Modeling",
     "Feature Engineering", "A/B Testing", "Causal Inference",
@@ -189,6 +200,18 @@ SKILL_ALIASES = {
     "llamaindex": "llamaindex",
     "sentence-transformers": "sentence transformers",
     "sbert": "sentence transformers",
+    "jax": "jax",
+    "flax": "jax",
+    "chromadb": "chroma",
+    "chroma db": "chroma",
+    "spacy": "spacy",
+    "wandb": "weights & biases",
+    "w&b": "weights & biases",
+    "vertex ai": "vertex ai",
+    "azure ml": "azure ml",
+    "bge": "embeddings",
+    "e5": "embeddings",
+    "openai embeddings": "embeddings",
 }
 
 # ============================================================================
@@ -331,6 +354,31 @@ ML_DOMAIN_KEYWORDS = {
 }
 
 # Anti-pattern keywords (consulting/generic work)
+# ============================================================================
+# Industry classification — AI/ML industries are strong signals
+# ============================================================================
+
+AI_INDUSTRIES = {
+    "ai/ml", "artificial intelligence", "machine learning",
+    "conversational ai", "voice ai", "healthtech ai",
+    "ai services", "ai research", "deep tech",
+    "natural language processing", "computer vision",
+}
+
+TECH_INDUSTRIES = {
+    "saas", "fintech", "e-commerce", "ecommerce", "edtech",
+    "adtech", "social media", "internet", "cloud computing",
+    "big data", "analytics", "cybersecurity", "gaming",
+    "media", "entertainment", "telecom",
+}
+
+NON_TECH_INDUSTRIES = {
+    "manufacturing", "paper products", "textiles", "retail",
+    "agriculture", "construction", "real estate", "mining",
+    "oil and gas", "transportation", "logistics", "food",
+    "automotive", "aviation", "pharmaceuticals",
+}
+
 CONSULTING_KEYWORDS = {
     "client project", "stakeholder management", "advisory",
     "consulting engagement", "requirement gathering",

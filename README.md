@@ -26,7 +26,7 @@ A multi-signal candidate ranking system for the **Senior AI Engineer — Foundin
 
 ## Architecture
 
-The system uses a **4-stage funnel pipeline** that processes 100K candidates in ~65 seconds on CPU, leveraging **21/22 Redrob behavioral signals** + profile text analysis:
+The system uses a **4-stage funnel pipeline** that processes 100K candidates in ~25 seconds on CPU, leveraging **22/22 Redrob behavioral signals** + profile text analysis:
 
 ```
 100K candidates
@@ -70,7 +70,7 @@ Embedding similarity treats all keywords equally. Our system reads **career traj
 | Skills Match | 20% | 3-tier taxonomy + trust multiplier + platform assessment boost (178 skills) |
 | Career Trajectory | 20% | Description + headline/summary analysis for production ML + leadership |
 | Experience Fit | 10% | Bell curve centered at 7yr (JD range: 5-9yr) |
-| Behavioral Signals | 10% | 16 components from 21/22 Redrob signals (notice, response, recency, market demand, etc.) |
+| Behavioral Signals | 10% | 17 components from 22/22 Redrob signals (notice, response, recency, market demand, etc.) |
 | Location | 8% | Pune/Noida preferred, Tier-1 India acceptable |
 | Anti-Pattern Penalty | 7% | Consulting-only, keyword stuffer, title chaser, CV-only |
 | Education | 5% | CS/AI field relevance + institution tier + ML certification bonus |
@@ -149,7 +149,7 @@ python app.py
 
 | Metric | Value |
 |--------|-------|
-| Total Runtime | ~65 seconds |
+| Total Runtime | ~25 seconds |
 | Memory Usage | <2 GB |
 | Candidates Processed | 100,000 |
 | After Filtering | ~40,000 |
@@ -177,7 +177,7 @@ redrob-ranker/
 │       ├── experience_fit.py  # Bell curve, 5-9yr sweet spot
 │       ├── location_score.py  # India tier-based scoring
 │       ├── education_score.py # Field + institution + degree level
-│       ├── behavioral_signals.py # 16-component availability score (21/22 signals)
+│       ├── behavioral_signals.py # 17-component availability score (22/22 signals)
 │       └── anti_patterns.py   # 4 detectors, additive penalties
 ├── jd/
 │   ├── requirements.py        # Structured JD representation

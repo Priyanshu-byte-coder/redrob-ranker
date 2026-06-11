@@ -158,7 +158,20 @@ def score_behavioral_signals(candidate: dict) -> tuple[float, dict]:
     else:
         components["tenure"] = 0.3  # Very new — could be synthetic
 
-    # Weighted composite (16 components, all 22 redrob_signals used, weights sum to 1.0)
+    # 17. Profile views — recruiter interest / market demand (weight: 0.03)
+    views = signals.get("profile_views_received_30d", 0)
+    if views >= 30:
+        components["profile_views"] = 1.0
+    elif views >= 15:
+        components["profile_views"] = 0.8
+    elif views >= 5:
+        components["profile_views"] = 0.6
+    elif views >= 1:
+        components["profile_views"] = 0.4
+    else:
+        components["profile_views"] = 0.2
+
+    # Weighted composite (17 components, all 22 redrob_signals used, weights sum to 1.0)
     score = (
         0.14 * components["notice"]
         + 0.14 * components["response_rate"]
@@ -176,6 +189,7 @@ def score_behavioral_signals(candidate: dict) -> tuple[float, dict]:
         + 0.02 * components["connections"]
         + 0.02 * components["endorsements"]
         + 0.01 * components["tenure"]
+        + 0.03 * components["profile_views"]
     )
     # Note: expected_salary_range_inr_lpa not used for scoring (salary is a
     # recruiter's budget constraint, not a quality signal for ranking)
