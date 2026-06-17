@@ -21,7 +21,7 @@ license: mit
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![CPU Only](https://img.shields.io/badge/compute-CPU%20only-orange.svg)](#performance)
 [![Runtime](https://img.shields.io/badge/runtime-25s%20%2F%20100K-brightgreen.svg)](#performance)
-[![Signals](https://img.shields.io/badge/Redrob%20signals-22%2F22-blueviolet)](#behavioral-signals)
+[![Signals](https://img.shields.io/badge/Redrob%20signals-23%2F23-blueviolet)](#behavioral-signals)
 [![Honeypots](https://img.shields.io/badge/honeypots%20in%20top%20100-0-red)](#honeypot-detection)
 
 [Live Demo](https://huggingface.co/spaces/bladebutcher/redrob-ranker) | [Submission CSV](submission.csv) | [Methodology](#how-it-works)
@@ -62,7 +62,7 @@ The catch: the dataset contains honeypot profiles (impossible candidates designe
 | 2 | CAND_0018499 | Senior ML Engineer | Zomato | 7.2yr | 3/3 ML roles, Noida, RecSys + DL |
 | 3 | CAND_0002025 | Senior AI Engineer | Apple | 5.9yr | 2/2 ML roles, FAISS + TensorFlow |
 | 4 | CAND_0081846 | Lead AI Engineer | Razorpay | 6.7yr | IR + LlamaIndex + pgvector |
-| 5 | CAND_0033861 | Senior NLP Engineer | Mad Street Den | 8.0yr | 3/3 ML, Indian AI startup |
+| 5 | CAND_0088025 | Staff ML Engineer | Yellow.ai | 8.6yr | Pinecone + QLoRA + RAG, Indian AI startup |
 
 Every candidate in the top 10 is a genuine AI/ML engineer at a product company, in the 5-9 year experience sweet spot, with production ML evidence in their career descriptions.
 
@@ -106,7 +106,7 @@ Every candidate in the top 10 is a genuine AI/ML engineer at a product company, 
 | **Skills Match** | 20% | 3-tier taxonomy (178 skills) with trust multiplier + platform assessment boost + endorsement validation |
 | **Career Trajectory** | 20% | Production ML evidence in descriptions, headline/summary analysis, AI industry experience, leadership + startup signals |
 | **Experience Fit** | 10% | Bell curve centered at 7yr (JD sweet spot: 5-9yr) |
-| **Behavioral Signals** | 10% | 17 components from all 22 Redrob platform signals |
+| **Behavioral Signals** | 10% | 18 components from all 23 Redrob platform signals |
 | **Location** | 8% | Pune/Noida preferred (JD), Tier-1 India acceptable, international with penalty |
 | **Anti-Pattern** | 7% | Penalties for consulting-only, keyword stuffing, title chasing, CV-only focus |
 | **Education** | 5% | Field relevance (CS/AI > EE > Mech) + institution tier + ML certification bonus |
@@ -175,7 +175,7 @@ This single mechanism eliminates most keyword stuffers from the top rankings.
 
 ### Behavioral Signals
 
-All **22 Redrob platform signals** are used across 17 weighted components:
+All **23 Redrob platform signals** are used across 18 weighted components:
 
 | Component | Weight | Signal Used |
 |-----------|:------:|-------------|
@@ -196,8 +196,7 @@ All **22 Redrob platform signals** are used across 17 weighted components:
 | Connections | 2% | `connection_count` |
 | Endorsements | 2% | `endorsements_received` |
 | Platform tenure | 1% | `signup_date` |
-
-**Excluded:** `expected_salary_range_inr_lpa` — salary is a recruiter's budget constraint, not a candidate quality signal.
+| Salary feasibility | 1% | `expected_salary_range_inr_lpa` |
 
 ---
 
@@ -208,7 +207,7 @@ Every candidate gets a specific, fact-based reasoning string. No templates, no h
 **Strong candidate (Rank #1):**
 > Senior AI Engineer at Netflix with 7.8yr exp. based in Vizag, Andhra Pradesh. 3/3 roles in ML/AI; ML leadership experience; startup/early-stage background; skills: LoRA, Learning to Rank, Weaviate, PEFT; 76% recruiter response rate.
 
-**Good candidate with concerns (Rank #5):**
+**Strong candidate (Rank #6, now with concern flag):**
 > Senior NLP Engineer at Mad Street Den with 8.0yr exp. based in Vizag, Andhra Pradesh. 3/3 roles in ML/AI; ML leadership experience; startup/early-stage background; skills: Reinforcement Learning, Weaviate, LoRA, LLMs. Concerns: low recruiter response rate (16%).
 
 31 out of 100 candidates include honest concern flags — the system doesn't hide gaps.
@@ -283,7 +282,7 @@ redrob-ranker/
 │       ├── experience_fit.py      # Bell curve centered at 7yr
 │       ├── location_score.py      # India tier-based (Pune/Noida > Bangalore > Tier-2)
 │       ├── education_score.py     # Field relevance + institution + certifications
-│       ├── behavioral_signals.py  # 17 components from 22/22 Redrob signals
+│       ├── behavioral_signals.py  # 18 components from 23/23 Redrob signals
 │       └── anti_patterns.py       # 4 detectors: stuffer, consulting, chaser, cv-only
 │
 ├── jd/

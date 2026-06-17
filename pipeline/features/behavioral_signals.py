@@ -171,9 +171,27 @@ def score_behavioral_signals(candidate: dict) -> tuple[float, dict]:
     else:
         components["profile_views"] = 0.2
 
-    # Weighted composite (17 components, all 22 redrob_signals used, weights sum to 1.0)
+    # 18. Salary feasibility — hiring reachability for Series A startup (weight: 0.01)
+    # Senior AI Engineer at Series A: realistic range is 15-60 LPA in India
+    salary_data = signals.get("expected_salary_range_inr_lpa", {})
+    if salary_data and isinstance(salary_data, dict):
+        salary_max = salary_data.get("max", 0) or 0
+        if salary_max == 0:
+            components["salary_feasibility"] = 0.5  # Not specified — neutral
+        elif salary_max <= 45:
+            components["salary_feasibility"] = 1.0  # Ideal range
+        elif salary_max <= 60:
+            components["salary_feasibility"] = 0.8  # Acceptable stretch
+        elif salary_max <= 80:
+            components["salary_feasibility"] = 0.5  # High but possible
+        else:
+            components["salary_feasibility"] = 0.2  # Likely unreachable for Series A
+    else:
+        components["salary_feasibility"] = 0.5  # Missing — neutral
+
+    # Weighted composite (18 components, all 23 redrob_signals used, weights sum to 1.0)
     score = (
-        0.14 * components["notice"]
+        0.13 * components["notice"]
         + 0.14 * components["response_rate"]
         + 0.11 * components["recency"]
         + 0.07 * components["open_to_work"]
@@ -190,8 +208,7 @@ def score_behavioral_signals(candidate: dict) -> tuple[float, dict]:
         + 0.02 * components["endorsements"]
         + 0.01 * components["tenure"]
         + 0.03 * components["profile_views"]
+        + 0.01 * components["salary_feasibility"]
     )
-    # Note: expected_salary_range_inr_lpa not used for scoring (salary is a
-    # recruiter's budget constraint, not a quality signal for ranking)
 
     return min(1.0, score), components

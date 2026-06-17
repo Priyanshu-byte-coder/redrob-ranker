@@ -11,7 +11,7 @@ from pathlib import Path
 
 TEMPLATE = Path(__file__).parent / "Idea Submission Template _ Redrob.pptx"
 ASSETS = Path(__file__).parent / "assets"
-OUTPUT = Path(__file__).parent / "Redrob_Submission_v4.pptx"
+OUTPUT = Path(__file__).parent / "Redrob_Submission_v5.pptx"
 
 # Colors — DARK text on WHITE background
 DARK = RGBColor(0x1E, 0x29, 0x3B)       # Primary text
@@ -88,21 +88,23 @@ def build():
 
             first_p(tf, "What is your proposed solution?", size=12, bold=True, color=ACCENT)
             add_p(tf, "")
-            add_p(tf, "A rule-based multi-signal ranking pipeline that processes 100K candidates in 25 seconds on CPU-only. Uses all 22 Redrob signals + career description analysis. No GPU, no LLM, no network.", size=10, color=DARK)
+            add_p(tf, "A rule-based multi-signal ranking pipeline processing 100K candidates in ~25 seconds on CPU-only. Uses all 23/23 Redrob signals + career description analysis. No GPU, no LLM, no network — fully reproducible.", size=10, color=DARK)
             add_p(tf, "")
             add_p(tf, "4-Stage Pipeline:", size=10, bold=True, color=ACCENT)
-            add_p(tf, "  Stage 0:  Honeypot Detection  (6 rules \u2192 67 impossible profiles caught)", size=9, color=MED)
-            add_p(tf, "  Stage 1:  Coarse Filter  (100K \u2192 40,789 via title + description + exp)", size=9, color=MED)
-            add_p(tf, "  Stage 2:  Multi-Signal Scoring  (8 weighted dimensions, 178 skills)", size=9, color=MED)
-            add_p(tf, "  Stage 3:  Rank + Reasoning  (top 100 with per-candidate explanations)", size=9, color=MED)
+            add_p(tf, "  Stage 0:  Honeypot Detection  \u2192  67 impossible profiles caught, 0 in top 100", size=9, color=MED)
+            add_p(tf, "  Stage 1:  Coarse Filter  \u2192  100K \u2192 40,789 (title + description + experience)", size=9, color=MED)
+            add_p(tf, "  Stage 2:  Multi-Signal Scoring  \u2192  8 weighted dimensions, 178-skill taxonomy", size=9, color=MED)
+            add_p(tf, "  Stage 3:  Rank + Reasoning  \u2192  top 100 with fact-grounded per-candidate explanations", size=9, color=MED)
             add_p(tf, "")
-            add_p(tf, "What differentiates from traditional matching?", size=12, bold=True, color=ACCENT)
+            add_p(tf, "Why this beats embeddings:", size=12, bold=True, color=ACCENT)
             add_p(tf, "")
-            add_p(tf, "\u2022  Embeddings treat all keywords equally \u2014 can't distinguish real ML engineers from stuffers", size=9, color=DARK)
-            add_p(tf, "\u2022  We read career descriptions to find actual production ML work evidence", size=9, color=DARK)
-            add_p(tf, "\u2022  Marketing Manager listing \"PyTorch\" \u2192 zero ML in descriptions \u2192 ranked LOW", size=9, color=DARK)
-            add_p(tf, "\u2022  Backend Engineer who \"built recommendation pipeline for 2M users\" \u2192 ranked HIGH", size=9, color=DARK)
-            add_p(tf, "\u2022  Trust multiplier: \"Expert\" skill + 0 months actual use = only 0.3\u00d7 credit", size=9, color=DARK)
+            add_p(tf, "Candidate A (embeddings rank HIGH \u2014 we rank LOW):", size=9, bold=True, color=RED)
+            add_p(tf, "  \"Senior AI Engineer\" at TCS \u2022  Skills: PyTorch, BERT, RAG, FAISS, Weaviate", size=8, color=MED)
+            add_p(tf, "  Descriptions: \u201cmanaged client deliverables\u201d, \u201cstakeholder management\u201d  \u2192  zero production ML", size=8, color=DIM)
+            add_p(tf, "")
+            add_p(tf, "Candidate B (embeddings rank LOW \u2014 we rank HIGH):", size=9, bold=True, color=GREEN)
+            add_p(tf, "  \"Software Engineer\" at Razorpay \u2022  Skills: Python, PyTorch", size=8, color=MED)
+            add_p(tf, "  Descriptions: \u201cbuilt recommendation pipeline 2M daily users\u201d, \u201cdeployed embedding model p99<50ms\u201d", size=8, color=DIM)
 
     # ===================== SLIDE 3: JD Understanding =====================
     s = slides[2]
@@ -111,23 +113,23 @@ def build():
             tf = clear_textbox(shape)
             tf.word_wrap = True
 
-            first_p(tf, "Key requirements extracted from the JD:", size=12, bold=True, color=ACCENT)
+            first_p(tf, "The JD told us how to solve it:", size=12, bold=True, color=ACCENT)
             add_p(tf, "")
-            add_p(tf, "\u2022  Role: Senior AI Engineer for founding team at a product company", size=9, color=DARK)
-            add_p(tf, "\u2022  Experience: 5\u20139 years (sweet spot ~7yr), production ML required", size=9, color=DARK)
-            add_p(tf, "\u2022  Must-have: embeddings, vector DBs, PyTorch/TF, semantic search, NLP, Python", size=9, color=DARK)
-            add_p(tf, "\u2022  Location: Pune/Noida preferred, India Tier-1 acceptable", size=9, color=DARK)
-            add_p(tf, "\u2022  Founding team \u2192 needs leadership ability + startup mindset + 0-to-1 builder", size=9, color=DARK)
+            add_p(tf, "\u201cThe right answer is NOT find candidates whose skills section contains the most AI keywords.", size=9, bold=True, color=RED)
+            add_p(tf, " That\u2019s a trap we\u2019ve explicitly built into the dataset.\u201d  \u2014 JD, Final Note", size=8, color=DIM)
             add_p(tf, "")
-            add_p(tf, "Most important signals (in priority order):", size=12, bold=True, color=ACCENT)
+            add_p(tf, "What the JD actually requires:", size=11, bold=True, color=ACCENT)
+            add_p(tf, "\u2022  Production ML deployments at product companies (not consulting)", size=9, color=DARK)
+            add_p(tf, "\u2022  5\u20139yr exp; 0-to-1 builder mindset; leadership + startup background", size=9, color=DARK)
+            add_p(tf, "\u2022  Embeddings, vector DBs, ranking systems \u2014 but only with production evidence", size=9, color=DARK)
+            add_p(tf, "\u2022  Pune/Noida preferred; notice period \u226430 days ideal", size=9, color=DARK)
+            add_p(tf, "\u2022  Behavioral availability: active on platform, responsive to recruiters", size=9, color=DARK)
             add_p(tf, "")
-            add_p(tf, "1.  Career Trajectory \u2014 what someone actually DID > what they CLAIM", size=9, bold=True, color=DARK)
-            add_p(tf, "     We analyze every job description for production ML keywords", size=8, color=DIM)
-            add_p(tf, "2.  Trust Multiplier \u2014 \"Expert\" + 0mo duration = 0.3\u00d7 (likely keyword stuffing)", size=9, bold=True, color=DARK)
-            add_p(tf, "3.  Anti-Patterns \u2014 consulting-only (-0.50), keyword stuffers (-0.80), title chasers (-0.20)", size=9, bold=True, color=DARK)
-            add_p(tf, "4.  Behavioral Availability \u2014 17 components from all 22 Redrob signals", size=9, bold=True, color=DARK)
-            add_p(tf, "5.  Platform Validation \u2014 skill_assessment_scores + endorsements boost trust", size=9, bold=True, color=DARK)
-            add_p(tf, "6.  Industry + Company Classification \u2014 AI-native > product > consulting", size=9, bold=True, color=DARK)
+            add_p(tf, "How we read between the lines:", size=11, bold=True, color=ACCENT)
+            add_p(tf, "1.  Career Trajectory \u2014 production ML evidence in descriptions (40+ keywords)", size=9, bold=True, color=DARK)
+            add_p(tf, "2.  Trust Multiplier \u2014 Expert + 0mo duration = 0.3\u00d7 (kills keyword stuffers)", size=9, bold=True, color=DARK)
+            add_p(tf, "3.  Anti-Patterns \u2014 consulting-only (\u22120.50), keyword stuffer (\u22120.80), title chaser (\u22120.20)", size=9, bold=True, color=DARK)
+            add_p(tf, "4.  All 23 Signals \u2014 notice period, response rate, recency, salary feasibility, \u2026", size=9, bold=True, color=DARK)
 
     # ===================== SLIDE 4: Ranking Methodology =====================
     s = slides[3]
@@ -230,7 +232,7 @@ def build():
             add_p(tf, "\u2022  Rule-based scoring \u2014 1,900 lines of hand-crafted feature logic", size=10, color=DARK)
             add_p(tf, "\u2022  Streaming JSONL \u2014 memory-efficient, handles 100K in single pass", size=10, color=DARK)
             add_p(tf, "\u2022  Gradio 5.x \u2014 interactive sandbox on HuggingFace Spaces", size=10, color=DARK)
-            add_p(tf, "\u2022  Git \u2014 21 commits, iterative development with clear history", size=10, color=DARK)
+            add_p(tf, "\u2022  Git \u2014 22+ commits, iterative development with clear history", size=10, color=DARK)
             add_p(tf, "\u2022  Dependencies: only pyyaml + tqdm", size=10, color=DARK)
             add_p(tf, "")
             add_p(tf, "Why rule-based over ML/embeddings?", size=12, bold=True, color=ACCENT)

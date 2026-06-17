@@ -237,7 +237,7 @@ def draw_results_dashboard():
     # Row 2
     metric_card(0.2, 0.8, "25.2s", "Runtime\n(limit: 5 min)", GREEN)
     metric_card(2.6, 0.8, "<2 GB", "Memory\n(limit: 16 GB)", BLUE)
-    metric_card(5.0, 0.8, "22/22", "Redrob Signals\nUsed", ACCENT2)
+    metric_card(5.0, 0.8, "23/23", "Redrob Signals\nUsed", ACCENT2)
     metric_card(7.4, 0.8, "0", "LLM API\nCalls", ACCENT)
 
     plt.tight_layout(pad=0.3)
