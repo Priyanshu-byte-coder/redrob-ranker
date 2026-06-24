@@ -23,6 +23,7 @@ license: mit
 [![Runtime](https://img.shields.io/badge/runtime-25s%20%2F%20100K-brightgreen.svg)](#performance)
 [![Signals](https://img.shields.io/badge/Redrob%20signals-23%2F23-blueviolet)](#behavioral-signals)
 [![Honeypots](https://img.shields.io/badge/honeypots%20in%20top%20100-0-red)](#honeypot-detection)
+![Views](https://komarev.com/ghpvc/?username=Priyanshu-byte-coder&color=blue)
 
 [Live Demo](https://huggingface.co/spaces/bladebutcher/redrob-ranker) | [Submission CSV](submission.csv) | [Methodology](#how-it-works)
 
